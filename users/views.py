@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import View, DetailView
+from django.views.generic import View
 
 from users.models import User, UserProfile
 
@@ -13,5 +13,7 @@ class UsersView(View):
     # queryset = User.objects.all()
 
 
-class UserDetailView(UsersView, DetailView):
-    model = User
+class UserProfileView(View):
+    def get(self, request, pk):
+        user = User.objects.get(id=pk)
+        return render(request, "users/user_profile.html", {"user": user})
