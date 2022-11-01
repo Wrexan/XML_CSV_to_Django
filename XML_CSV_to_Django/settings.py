@@ -25,21 +25,23 @@ SECRET_KEY = 'django-insecure-wt0jyah+e$o%&gce(*bgve@&b3b7ord399z@$yna10c)1#fhd)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ()
 
 
 # Application definition
 
-INSTALLED_APPS = [
+INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-]
 
-MIDDLEWARE = [
+    'users',
+)
+
+MIDDLEWARE = (
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -47,11 +49,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+)
 
 ROOT_URLCONF = 'XML_CSV_to_Django.urls'
 
-TEMPLATES = [
+TEMPLATES = (
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates']
@@ -66,7 +68,7 @@ TEMPLATES = [
             ],
         },
     },
-]
+)
 
 WSGI_APPLICATION = 'XML_CSV_to_Django.wsgi.application'
 
@@ -99,6 +101,8 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTH_USER_MODEL = 'users.User'
 
 
 # Internationalization
