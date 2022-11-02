@@ -20,6 +20,7 @@
                         <p>
                     </div>
                     <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
                         <div class="mb-4 h5">
                             <input type="file" class="form-control text-bg-dark" id="files" name="files"
                                    accept=".csv, .xml" multiple>
@@ -27,12 +28,6 @@
                         <div>
                             <button type="submit" class="btn btn-outline-dark mt-3 w-25">Upload</button>
                         </div>
-{#                        <div>#}
-{#                            <a class="btn btn-outline-dark mt-3 px-3 w-25" href="{{ URL.upload }}?source=demo1">Upload DEMO 1</a>#}
-{#                        </div>#}
-{#                        <div>#}
-{#                            <a class="btn btn-outline-dark mt-3 px-3 w-25" href="{{ URL.upload }}?source=demo2">Upload DEMO 2</a>#}
-{#                        </div>#}
                     </form>
                     <p>
                     <p>
