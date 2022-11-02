@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Upload
+{% endblock %}
+
+{% block page_name %}
+    Upload
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid pb-3 my-5">
+        <div class="container d-grid gap-3" style="grid-template-columns: 1fr;">
+            <div class="bg-light border rounded-3 p-5">
+                <div class="d-flex justify-content-center row mb-3 text-center">
+                    <div class="mb-4">
+                        <h2>
+                            Here you can upload users data files to add them to the database
+                        </h2>
+                        <p>
+                    </div>
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="mb-4 h5">
+                            <input type="file" class="form-control text-bg-dark" id="files" name="files"
+                                   accept=".csv, .xml" multiple>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-outline-dark mt-3 w-25">Upload</button>
+                        </div>
+{#                        <div>#}
+{#                            <a class="btn btn-outline-dark mt-3 px-3 w-25" href="{{ URL.upload }}?source=demo1">Upload DEMO 1</a>#}
+{#                        </div>#}
+{#                        <div>#}
+{#                            <a class="btn btn-outline-dark mt-3 px-3 w-25" href="{{ URL.upload }}?source=demo2">Upload DEMO 2</a>#}
+{#                        </div>#}
+                    </form>
+                    <p>
+                    <p>
+                    <p>
+                    <h2>
+                        How to
+                    </h2>
+                    <p>
+                    <div class="mb-4 h5">
+                        <div class="text-start">
+                            <p>You need to upload <b>2</b> files: <b>*.xml</b> and <b>*.csv</b>.
+                            <p> - CSV file must contain comma separated user data with header column names like: <b>username, password, date_joined</b>.
+                            <p> - XML file must contain next fields: <b>first_name, last_name, avatar(url)</b>.
+                            <p>! All fields in that files are <b>mandatory</b>, otherwise user - will be <b>ignored</b>.
+                            <p>! Both files also <b>must contain same users</b>. User, that was only found in one file - will be <b>ignored</b>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
