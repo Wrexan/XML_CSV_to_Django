@@ -3,7 +3,7 @@ from django.views.generic import View, FormView
 
 from .forms import FileFieldForm
 from .models import User
-from logic.users import UserUploader
+from logic.users_logic import UserUploader
 
 
 class UsersView(View):

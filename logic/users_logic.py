@@ -8,7 +8,7 @@ from django.utils import timezone
 
 from django.contrib import messages
 
-from users.models import User
+from users.models import User, UserProfile
 
 
 class UserUploader:
@@ -47,14 +47,16 @@ class UserUploader:
                     first_name=user_data['first_name'],
                     last_name=user_data['last_name'],
                 )
-                User.save(user)
+                user.save()
+                user_profile = UserProfile.objects.create(user=user, avatar_url=user_data['avatar_url'])
+                user_profile.save()
                 users_success += 1
             except IntegrityError as err:
                 if len(errors) < 5:
                     errors[errored_username] = err
         if users_success == users_amount:
             messages.success(request, f'Successfully uploaded all {users_success} users')
-        if users_success > 0:
+        elif users_success > 0:
             messages.info(request, f'Successfully uploaded {users_success} users of {users_amount}')
         [messages.warning(request, f'{user}: {error}') for user, error in errors.items()]
 
