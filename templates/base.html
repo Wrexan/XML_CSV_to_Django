@@ -64,22 +64,11 @@
         </div>
     </div>
 </header>
-{#{% with messages = get_flashed_messages() %}#}
-{#    {% if messages %}#}
-{#        <div class="modal modal-alert position-static d-block bg-secondary py-1">#}
-{#            <div class="modal-dialog" role="document">#}
-{#                <div class="modal-content rounded-3 shadow">#}
-{#                    <div class="modal-body p-0 text-center">#}
-{#                        <h5 class="mb-0">Oops</h5>#}
-{#                        {% for message in messages %}#}
-{#                            <li>{{ message }}</li>#}
-{#                        {% endfor %}#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    {% endif %}#}
-{#{% endwith %}#}
+{% for message in messages %}
+  <div class="alert {{ message.tags }} alert-dismissible p-1 m-0 text-center" role="alert" >
+    {{ message }}
+  </div>
+{% endfor %}
 {% block body %}{% endblock %}
 <footer class="footer mt-auto py-3 bg-dark fixed-bottom">
     <div class="container text-center text-muted">
