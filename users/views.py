@@ -1,3 +1,6 @@
+import codecs
+import csv
+
 from django.contrib import messages
 from django.shortcuts import render
 from django.views.generic import View, FormView
@@ -51,21 +54,21 @@ class UsersUploadFileFieldFormView(FormView):
         if errors:
             [messages.error(request, message) for message in errors.values()]
             return
-        # csv_dicts = self.csv_file_rows_to_dict(files_by_ext['csv'])
+        csv_dicts = self.csv_file_rows_to_dict(files_by_ext['csv'])
         xml_dicts = self.xml_file_rows_to_dict(files_by_ext['xml'])
 
-    # @staticmethod
-    # def csv_file_rows_to_dict(lst: list) -> dict:
-    #     """Parse .csv rows using header format
-    #     returns: [dict{first_name: *, last_name: *, avatar: *}]"""
-    #     if isinstance(lst[0], bytes):
-    #         stringed_dict = {}
-    #         for row in lst:
-    #             if len(row) > 2:
-    #                 string = row.decode(encoding='utf-8', errors='strict')
-    #                 stringed_dict[string[0:3]] = string[3:].rstrip()
-    #         return stringed_dict
-    #     return {row[0:3]: row[3:].rstrip() for row in lst if len(row) > 2}
+    def csv_file_rows_to_dict(self, file) -> [dict]:
+        """Parse .csv rows using header format
+        returns: [dict{username: *, password: *, date_joined: *}]"""
+        users = []
+        reader = csv.DictReader(codecs.iterdecode(file, 'utf-8'), delimiter=',', lineterminator='\r\n')
+        for row in reader:
+            if 'username' in row and 'password' in row and 'date_joined' in row:
+                row['username'] = self.clean_text_in_brackets(row['username'])
+                if row['username'] and row['password'] and row['date_joined']:
+                    users.append(row)
+                    print(row)
+        return users
 
     def xml_file_rows_to_dict(self, file) -> [dict]:
         """Parse abbreviations rows using abbreviations format
@@ -97,6 +100,5 @@ class UsersUploadFileFieldFormView(FormView):
                     cutter['end'] = i
                     break
             if len(cutter) == 2:
-                print(f'{text=} {cutter=}')
                 return f"{text[:cutter['start']]}{text[len(text)-cutter['end']:]}".strip()
             return text
