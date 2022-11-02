@@ -1,7 +1,7 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.shortcuts import render
 from django.views.generic import View, FormView
+import xml.etree.ElementTree as ET
 
 from .forms import FileFieldForm
 from .models import User
@@ -35,7 +35,6 @@ class UsersUploadFileFieldFormView(FormView):
             self.handle_uploaded_files(request, files)
             return super().form_valid(form)
         else:
-            print(f'form is invalid: {form.__dict__=}')
             return self.form_invalid(form)
 
     def handle_uploaded_files(self, request, files):
@@ -52,5 +51,52 @@ class UsersUploadFileFieldFormView(FormView):
         if errors:
             [messages.error(request, message) for message in errors.values()]
             return
+        # csv_dicts = self.csv_file_rows_to_dict(files_by_ext['csv'])
+        xml_dicts = self.xml_file_rows_to_dict(files_by_ext['xml'])
 
+    # @staticmethod
+    # def csv_file_rows_to_dict(lst: list) -> dict:
+    #     """Parse .csv rows using header format
+    #     returns: [dict{first_name: *, last_name: *, avatar: *}]"""
+    #     if isinstance(lst[0], bytes):
+    #         stringed_dict = {}
+    #         for row in lst:
+    #             if len(row) > 2:
+    #                 string = row.decode(encoding='utf-8', errors='strict')
+    #                 stringed_dict[string[0:3]] = string[3:].rstrip()
+    #         return stringed_dict
+    #     return {row[0:3]: row[3:].rstrip() for row in lst if len(row) > 2}
 
+    def xml_file_rows_to_dict(self, file) -> [dict]:
+        """Parse abbreviations rows using abbreviations format
+        returns: [dict{first_name: *, last_name: *, avatar: *}]"""
+        users = []
+        tree = ET.parse(file)
+        root_user_in_tree = tree.find('user')
+        users_in_tree = root_user_in_tree.find('users')
+        for user in users_in_tree:
+            first_name = self.clean_text_in_brackets(user.find('first_name').text)
+            last_name = self.clean_text_in_brackets(user.find('last_name').text)
+            avatar = user.find('avatar').text
+            if first_name and last_name and avatar:
+                users.append({'first_name': first_name,
+                              'last_name': last_name,
+                              'avatar': avatar})
+        return users
+
+    @staticmethod
+    def clean_text_in_brackets(text: str or None) -> str or None:
+        if text:
+            cutter = {}
+            for i, symbol in enumerate(text):
+                if symbol in '([':
+                    cutter['start'] = i
+                    break
+            for i, symbol in enumerate(text[::-1]):
+                if symbol in ')]':
+                    cutter['end'] = i
+                    break
+            if len(cutter) == 2:
+                print(f'{text=} {cutter=}')
+                return f"{text[:cutter['start']]}{text[len(text)-cutter['end']:]}".strip()
+            return text
