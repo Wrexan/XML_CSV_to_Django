@@ -56,6 +56,7 @@ class UsersUploadFileFieldFormView(FormView):
             return
         csv_dicts = self.csv_file_rows_to_dict(files_by_ext['csv'])
         xml_dicts = self.xml_file_rows_to_dict(files_by_ext['xml'])
+        result_dict = self.unite_files_data(csv_dicts, xml_dicts)
 
     def csv_file_rows_to_dict(self, file) -> [dict]:
         """Parse .csv rows using header format
@@ -67,7 +68,6 @@ class UsersUploadFileFieldFormView(FormView):
                 row['username'] = self.clean_text_in_brackets(row['username'])
                 if row['username'] and row['password'] and row['date_joined']:
                     users.append(row)
-                    print(row)
         return users
 
     def xml_file_rows_to_dict(self, file) -> [dict]:
@@ -86,6 +86,18 @@ class UsersUploadFileFieldFormView(FormView):
                               'last_name': last_name,
                               'avatar': avatar})
         return users
+
+    @staticmethod
+    def unite_files_data(csv_dicts: [dict], xml_dicts: [dict]) -> [dict]:
+        united_users = []
+        for i, user_profile_data in enumerate(xml_dicts):
+            for k, user_login_data in enumerate(csv_dicts):
+                if user_profile_data['last_name'] in user_login_data['username']:
+                    unite = csv_dicts.pop(k)
+                    unite.update(user_profile_data)
+                    united_users.append(unite)
+                    break
+        return united_users
 
     @staticmethod
     def clean_text_in_brackets(text: str or None) -> str or None:
