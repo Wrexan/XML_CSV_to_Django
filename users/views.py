@@ -1,5 +1,9 @@
 import codecs
 import csv
+from datetime import datetime, tzinfo
+
+from django.db import IntegrityError
+from django.utils import timezone
 
 from django.contrib import messages
 from django.shortcuts import render
@@ -26,6 +30,7 @@ class UsersUploadFileFieldFormView(FormView):
     form_class = FileFieldForm
     template_name = 'users/upload.html'
     success_url = "/"
+
 
     def get(self, request, *args, **kwargs):
         return render(request, "users/upload.html")
@@ -56,7 +61,33 @@ class UsersUploadFileFieldFormView(FormView):
             return
         csv_dicts = self.csv_file_rows_to_dict(files_by_ext['csv'])
         xml_dicts = self.xml_file_rows_to_dict(files_by_ext['xml'])
-        result_dict = self.unite_files_data(csv_dicts, xml_dicts)
+        users_dicts = self.unite_files_data(csv_dicts, xml_dicts)
+        self.insert_users_to_db(request, users_dicts)
+
+    def insert_users_to_db(self, request, users_dict: [dict]):
+        users_success = 0
+        users_amount = len(users_dict)
+        errors = {}
+        for user_data in users_dict:
+            errored_username = user_data['username']
+            try:
+                user = User.objects.create_user(
+                    username=user_data['username'],
+                    password=user_data['password'],
+                    date_joined=datetime.fromtimestamp(int(user_data['date_joined']), tz=timezone.utc),
+                    first_name=user_data['first_name'],
+                    last_name=user_data['last_name'],
+                )
+                User.save(user)
+                users_success += 1
+            except IntegrityError as err:
+                if len(errors) < 5:
+                    errors[errored_username] = err
+        if users_success == users_amount:
+            messages.success(request, f'Successfully uploaded all {users_success} users')
+        if users_success > 0:
+            messages.info(request, f'Successfully uploaded {users_success} users of {users_amount}')
+        [messages.warning(request, f'{user}: {error}') for user, error in errors.items()]
 
     def csv_file_rows_to_dict(self, file) -> [dict]:
         """Parse .csv rows using header format
@@ -71,7 +102,7 @@ class UsersUploadFileFieldFormView(FormView):
         return users
 
     def xml_file_rows_to_dict(self, file) -> [dict]:
-        """Parse abbreviations rows using abbreviations format
+        """Parse *.xml tree to get users
         returns: [dict{first_name: *, last_name: *, avatar: *}]"""
         users = []
         tree = ET.parse(file)
@@ -80,15 +111,16 @@ class UsersUploadFileFieldFormView(FormView):
         for user in users_in_tree:
             first_name = self.clean_text_in_brackets(user.find('first_name').text)
             last_name = self.clean_text_in_brackets(user.find('last_name').text)
-            avatar = user.find('avatar').text
-            if first_name and last_name and avatar:
+            avatar_url = user.find('avatar').text
+            if first_name and last_name and avatar_url:
                 users.append({'first_name': first_name,
                               'last_name': last_name,
-                              'avatar': avatar})
+                              'avatar_url': avatar_url})
         return users
 
     @staticmethod
     def unite_files_data(csv_dicts: [dict], xml_dicts: [dict]) -> [dict]:
+        """aggregate two dicts if their users looks the same"""
         united_users = []
         for i, user_profile_data in enumerate(xml_dicts):
             for k, user_login_data in enumerate(csv_dicts):
