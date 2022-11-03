@@ -14,8 +14,8 @@ class UsersView(View):
 
 class UserProfileView(View):
     def get(self, request, pk):
-        user = User.objects.get(id=pk)
-        return render(request, "users/user_profile.html", {"user": user})
+        user_profile = User.objects.get(id=pk)
+        return render(request, "users/user_profile.html", {"user_profile": user_profile})
 
 
 class UsersUploadFileFieldFormView(FormView):

@@ -2,11 +2,11 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    {{ user.username }}
+    {{ user_profile.username }}
 {% endblock %}
 
 {% block page_name %}
-    Profile of {{ user.username }}
+    Profile of {{ user_profile.username }}
 {% endblock %}
 
 {% block body %}
@@ -14,13 +14,13 @@
         <div class="container d-grid gap-3" style="grid-template-columns: 1fr;">
             <div class="row g-0 border rounded-5 overflow-hidden flex-md-row mt-0 shadow-sm h-md-250 position-relative">
                 <div class="col-md-5">
-                    <img width="70%" height="auto" src="{{ user.userprofile.avatar_url }}" alt=""/>
+                    <img width="70%" height="auto" src="{{ user_profile.userprofile.avatar_url }}" alt=""/>
                 </div>
                 <div class="h2 col py-5 d-flex flex-column position-static">
-                    <p class="h1">{{ user.username }}</p>
-                    <p>First name: {{ user.first_name }}</p>
-                    <p>Last name: {{ user.last_name }}</p>
-                    <p>Joined: {{ user.date_joined.ctime }}</p>
+                    <p class="h1">{{ user_profile.username }}</p>
+                    <p>First name: {{ user_profile.first_name }}</p>
+                    <p>Last name: {{ user_profile.last_name }}</p>
+                    <p>Joined: {{ user_profile.date_joined.ctime }}</p>
                 </div>
             </div>
         </div>

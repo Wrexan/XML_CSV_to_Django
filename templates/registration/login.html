@@ -1,0 +1,31 @@
+
+{% extends 'base.html' %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+{% block page_name %}
+    Login
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid pb-0 my-5">
+        <div class="container d-grid gap-3" style="grid-template-columns: 1fr;">
+            <div class="row g-0 border rounded-5 overflow-hidden flex-md-row mt-0 shadow-sm h-md-250 position-relative">
+{#                <div class="col-md-5">#}
+{#                    <img width="70%" height="auto" src="{{ user.userprofile.avatar_url }}" alt=""/>#}
+{#                </div>#}
+                <div class="h2 col py-5 px-5 d-flex flex-column position-static row text-center">
+                    <p class="h1">Enter your data</p>
+                    <form action="{% url 'login' %}" method="post" class="col py-5 px-2">
+                        {{ form }}
+                        {% csrf_token %}
+                        <div>
+                            <button type="submit" class="btn btn-outline-dark mt-5 w-25">Submit</button>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
