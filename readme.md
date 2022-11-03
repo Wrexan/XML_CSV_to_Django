@@ -17,8 +17,8 @@ Users can be deleted only via /admin/ panel\
 Not checked on mobile devices\
 Overall noobiecode effect
 ### Screenshots:
-![](00.jpg)
-![](01.jpg)
-![](02.jpg)
+![](00.JPG)
+![](01.JPG)
+![](02.JPG)
 
 
