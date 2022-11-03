@@ -2,7 +2,7 @@
 This is a test task project for JUNIOR PYTHON DEVELOPER position.\
 Task is described in task.md file.
 ### Setup:
-git clone https://github.com/Wrexan/XML_CSV_to_Django\
+git clone https://github.com/Wrexan/XML_CSV_to_Django \
 python3 -m venv venv\
 source venv/bin/activate or venv\Scripts\activate (Windows)\
 pip install -r requirements.txt
