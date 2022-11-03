@@ -1,5 +1,6 @@
 import codecs
 import csv
+import re
 from datetime import datetime
 import xml.etree.ElementTree as ET
 
@@ -113,15 +114,17 @@ class UserUploader:
     @staticmethod
     def clean_text_in_brackets(text: str or None) -> str or None:
         if text:
-            cutter = {}
-            for i, symbol in enumerate(text):
-                if symbol in '([':
-                    cutter['start'] = i
-                    break
-            for i, symbol in enumerate(text[::-1]):
-                if symbol in ')]':
-                    cutter['end'] = i
-                    break
-            if len(cutter) == 2:
-                return f"{text[:cutter['start']]}{text[len(text) - cutter['end']:]}".strip()
+            text = re.sub(r'\([^()]*\)', '', text).strip()
+            text = re.sub(r'\[.*\]', '', text).strip()
+            # cutter = {}
+            # for i, symbol in enumerate(text):
+            #     if symbol in '([':
+            #         cutter['start'] = i
+            #         break
+            # for i, symbol in enumerate(text[::-1]):
+            #     if symbol in ')]':
+            #         cutter['end'] = i
+            #         break
+            # if len(cutter) == 2:
+            #     return f"{text[:cutter['start']]}{text[len(text) - cutter['end']:]}".strip()
             return text
