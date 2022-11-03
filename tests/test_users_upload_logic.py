@@ -135,5 +135,6 @@ def test_unite_files_data_to_dict_success():
 
 
 def test_unite_files_data_to_dict_fail():
-    result = len(U.unite_files_data(test_csv_result, [test_xml_result[0]]))
+    dict_1 = copy(test_csv_result)
+    result = len(U.unite_files_data(dict_1, [test_xml_result[0]]))
     assert result != len(test_united_result)

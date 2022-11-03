@@ -15,7 +15,7 @@ from users.models import User, UserProfile
 class UserUploader:
 
     def handle_uploaded_files(self, request, files) -> None:
-        checked_files_by_ext = self.check_file_number_and_extensions(request, files)
+        checked_files_by_ext = self.check_file_number_and_extensions(files, request)
         if not checked_files_by_ext:
             return
         csv_dicts = self.csv_file_rows_to_dict(checked_files_by_ext['csv'])
