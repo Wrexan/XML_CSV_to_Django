@@ -14,6 +14,16 @@ from users.models import User, UserProfile
 class UserUploader:
 
     def handle_uploaded_files(self, request, files) -> None:
+        checked_files_by_ext = self.check_file_number_and_extensions(request, files)
+        if not checked_files_by_ext:
+            return
+        csv_dicts = self.csv_file_rows_to_dict(checked_files_by_ext['csv'])
+        xml_dicts = self.xml_file_rows_to_dict(checked_files_by_ext['xml'])
+        users_dicts = self.unite_files_data(csv_dicts, xml_dicts)
+        self.insert_users_to_db(request, users_dicts)
+
+    @staticmethod
+    def check_file_number_and_extensions(files, request):
         errors = {"csv": "Expected CSV and XML file. CSV absent",
                   "xml": "Expected CSV and XML file. XML absent"}
         files_by_ext = {}
@@ -25,12 +35,10 @@ class UserUploader:
                 files_by_ext[extension] = file
                 del errors[extension]
         if errors:
+            print(f'{errors=}')
             [messages.error(request, message) for message in errors.values()]
             return
-        csv_dicts = self.csv_file_rows_to_dict(files_by_ext['csv'])
-        xml_dicts = self.xml_file_rows_to_dict(files_by_ext['xml'])
-        users_dicts = self.unite_files_data(csv_dicts, xml_dicts)
-        self.insert_users_to_db(request, users_dicts)
+        return files_by_ext
 
     @staticmethod
     def insert_users_to_db(request, users_dict: [dict]) -> None:
